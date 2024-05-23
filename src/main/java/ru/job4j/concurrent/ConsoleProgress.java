@@ -10,12 +10,12 @@ public class ConsoleProgress implements Runnable {
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
-                    System.out.print("\r load: Finished!");
-                    return;
+                    Thread.currentThread().interrupt();
                 }
                 System.out.print("\r load: " + c);
             }
         }
+        System.out.print("\r load: Finished!");
     }
 
     public static void main(String[] args) {

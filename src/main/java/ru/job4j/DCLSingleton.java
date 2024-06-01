@@ -2,7 +2,7 @@ package ru.job4j;
 
 public final class DCLSingleton {
 
-    private static DCLSingleton instance;
+    private static volatile DCLSingleton instance;
 
     public static DCLSingleton getInstance() {
         if (instance == null) {

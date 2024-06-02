@@ -54,8 +54,7 @@ public class Wget implements Runnable {
                     long downloadTime = endTime - startTime;
 
                     if (speed != NO_PAUSE_THRESHOLD && downloadTime < 1000) {
-                        int pause = (int) (bytesDownloaded / 1000);
-                        Thread.sleep(pause);
+                        Thread.sleep(bytesDownloaded);
                     }
 
                     bytesDownloaded = 0;

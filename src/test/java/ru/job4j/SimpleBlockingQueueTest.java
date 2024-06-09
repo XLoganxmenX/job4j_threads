@@ -12,7 +12,13 @@ class SimpleBlockingQueueTest {
     public void whenOfferAndPoll() throws InterruptedException {
         SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(10);
         List<Integer> testList = new ArrayList<>();
-        Thread offerThread = new Thread(() -> queue.offer(1));
+        Thread offerThread = new Thread(() -> {
+            try {
+                queue.offer(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
         Thread poolThread = new Thread(
                 () -> {
                     try {
@@ -34,7 +40,13 @@ class SimpleBlockingQueueTest {
     public void whenPollAndOffer() throws InterruptedException {
         SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(10);
         List<Integer> testList = new ArrayList<>();
-        Thread offerThread = new Thread(() -> queue.offer(1));
+        Thread offerThread = new Thread(() -> {
+            try {
+                queue.offer(1);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
         Thread poolThread = new Thread(
                 () -> {
                     try {
@@ -56,8 +68,20 @@ class SimpleBlockingQueueTest {
     public void whenOfferAndPollWithSizeLimit() throws InterruptedException {
         SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(1);
         List<Integer> testList = new ArrayList<>();
-        Thread offerThread = new Thread(() -> queue.offer(1));
-        Thread secondOfferThread = new Thread(() -> queue.offer(2));
+        Thread offerThread = new Thread(() -> {
+            try {
+                queue.offer(1);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        Thread secondOfferThread = new Thread(() -> {
+            try {
+                queue.offer(2);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
         Thread poolThread = new Thread(
                 () -> {
                     try {

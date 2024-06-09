@@ -11,39 +11,30 @@ public class SimpleBlockingQueue<T> {
 
     @GuardedBy("this")
     private final Queue<T> queue = new LinkedList<>();
-    private final int maxSize;
-    private int count;
+    private int remainSize;
 
     public SimpleBlockingQueue(int size) {
-        this.maxSize = size;
+        this.remainSize = size;
     }
 
-    public void offer(T value) {
-        synchronized (this) {
-            while (count == maxSize) {
-                try {
-                    this.wait();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-
-            queue.offer(value);
-            count++;
-            this.notify();
+    public synchronized void offer(T value) throws InterruptedException {
+        while (remainSize == 0) {
+            this.wait();
         }
+
+        queue.offer(value);
+        remainSize--;
+        this.notify();
     }
 
-    public T poll() throws InterruptedException {
-        synchronized (this) {
-            while (queue.isEmpty()) {
-                this.wait();
-            }
-
-            T returnItem = queue.poll();
-            count--;
-            this.notify();
-            return returnItem;
+    public synchronized T poll() throws InterruptedException {
+        while (queue.isEmpty()) {
+            this.wait();
         }
+
+        T returnItem = queue.poll();
+        remainSize++;
+        this.notify();
+        return returnItem;
     }
 }

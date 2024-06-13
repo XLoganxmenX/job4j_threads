@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 public class Cache {
@@ -15,21 +14,13 @@ public class Cache {
     }
 
     public boolean update(Base model) throws OptimisticException {
-        AtomicReference<OptimisticException> exception = new AtomicReference<>();
         boolean result;
         result = memory.computeIfPresent(model.id(), (existModel, existValue) -> {
-            Base returnModel = new Base(model.id(), model.name(), model.version() + 1);
             if (existValue.version() != model.version()) {
-                exception.set(new OptimisticException("Versions are not equal"));
-                returnModel = existValue;
+                throw new OptimisticException("Versions are not equal");
             }
-
-            return returnModel;
+            return new Base(model.id(), model.name(), model.version() + 1);
         }) != null;
-
-        if (exception.get() != null) {
-            throw exception.get();
-        }
 
         return result;
     }

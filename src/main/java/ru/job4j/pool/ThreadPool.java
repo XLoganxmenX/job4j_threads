@@ -27,16 +27,8 @@ public class ThreadPool {
         }
     }
 
-    public void work(Runnable job) {
-        threads.stream()
-                .filter(thread -> thread.getState() == Thread.State.WAITING)
-                .forEach(Thread::notifyAll);
-
-        try {
-            tasks.offer(job);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    public void work(Runnable job) throws InterruptedException {
+        tasks.offer(job);
     }
 
     public void shutdown() {

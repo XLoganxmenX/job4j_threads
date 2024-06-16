@@ -4,11 +4,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class EmailNotification {
-    private final ExecutorService pool;
-
-    public EmailNotification() {
-        this.pool = Executors.newCachedThreadPool();
-    }
+    private final ExecutorService pool = Executors.newCachedThreadPool();
 
     public void emailTo(User user) {
         String username = user.username();
